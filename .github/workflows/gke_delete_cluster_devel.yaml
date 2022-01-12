@@ -42,6 +42,10 @@ jobs:
     - run: |-
        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
+    - name: Get logs and events
+      run: sh -c "while true; do kubectl logs manager > /tmp/logs && tail /tmp/logs && sleep 5; done" & kubectl wait --for=condition=complete --timeout=18000s pod/manager
+      continue-on-error: true
+
     # Although deleting the cluster is enough for deleting all k8s resources,
     # deleting the chart is needed for handling the cleanup process of some resources
     # (eg: having the GCP storage class delete the persistent disk when the PVC is deleted)
