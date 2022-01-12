@@ -39,8 +39,9 @@ jobs:
     - run: |-
        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
+    # Requires kubectl client version > 1.23
     - name: Get logs and events
-      run: sh -c "while true; do kubectl logs manager > /tmp/logs && tail /tmp/logs && sleep 5; done" & kubectl wait --for=condition=complete --timeout=18000s pod/manager
+      run: sh -c "while true; do kubectl logs manager > /tmp/logs && tail /tmp/logs && sleep 5; done" & kubectl wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=18000s pod/manager
       continue-on-error: true
 
     # Although deleting the cluster is enough for deleting all k8s resources,
