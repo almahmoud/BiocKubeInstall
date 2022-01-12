@@ -95,7 +95,6 @@ jobs:
       run: sh -c "while true; do kubectl logs manager > /tmp/logs && tail /tmp/logs && sleep 5; done" & kubectl wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=18000s pod/manager
       continue-on-error: true
 
-
   deployreleasechart:
     name: Deploy helm chart and wait
     runs-on: ubuntu-latest
@@ -119,6 +118,11 @@ jobs:
     - name: Install Helm
       run: |
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+    - name: Wait to create a delay in peak load
+      run: for i in {1..30}; do echo "$i x Sleeping 10 seconds"; sleep 10; done
+      continue-on-error: true
+      shell: bash
 
     - name: Create secret for cluster
       run: |-
