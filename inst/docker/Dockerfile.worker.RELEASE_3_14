@@ -1,3 +1,4 @@
+ARG RELEASE=RELEASE_3_14
 FROM bioconductor/bioconductor_docker:$RELEASE
 
 RUN apt-get update && \
