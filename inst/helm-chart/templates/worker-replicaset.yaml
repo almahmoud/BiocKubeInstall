@@ -5,7 +5,7 @@ metadata:
   labels:
     tier: workcluster
 spec:
-  replicas: {{ .Values.workerPoolSize }}
+  replicas: {{ .Values.workers.poolSize }}
   selector:
     matchLabels:
       tier: workcluster
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: {{ .Values.workerImage }}:{{ .Values.workerImageTag }}
+        image: {{ .Values.workers.image.repository }}:{{ .Values.workers.image.tag }}
         imagePullPolicy: {{ .Values.pullPolicy }}
         resources:
           requests:
@@ -31,8 +31,8 @@ spec:
         command: ["sh"]
         args:
         - -c
-        - {{ if .Values.extraWorkerCommands -}}
-          {{- tpl .Values.extraWorkerCommands $ }};
+        - {{ if .Values.workers.extraCommand -}}
+          {{- tpl .Values.workers.extraCommand $ }};
           {{- end -}}
           R -f /home/docker/worker.R
       volumes:

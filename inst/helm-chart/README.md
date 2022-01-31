@@ -62,7 +62,7 @@ can be changed in two ways,
    login password ``rstudioPassword`` and the number of workers you
    want to deploy `workerPoolSize`
 
-        workerPoolSize: 5             # Number of workers in the cluster
+        workers.poolSize: 5             # Number of workers in the cluster
         ...
         rstudioPassword: bioc         # RStudio password on manager
 
