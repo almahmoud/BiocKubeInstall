@@ -10,12 +10,7 @@ spec:
       image: {{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}
       imagePullPolicy: {{ .Values.pullPolicy }}
       resources:
-        requests:
-          memory: 700Mi
-          cpu: 500m
-        limits:
-          memory: 2Gi
-          cpu: 1700m
+        {{- toYaml .Values.manager.resources | nindent 8 }}
       volumeMounts:
         - name: {{ .Values.volumeMountName }}
           mountPath: {{ .Values.volumeMountPath }}

@@ -30,6 +30,13 @@ manager:
     tag: manager
   # Inject an `sh` prequel command to run before `RScript -e BiocKubeInstall::kube_run`
   extraCommand: ""
+  resources:
+    requests:
+      memory: 700Mi
+      cpu: 500m
+    limits:
+      memory: 2Gi
+      cpu: 1700m
 
 
 # Volume mount
