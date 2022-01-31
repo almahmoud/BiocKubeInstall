@@ -1,4 +1,4 @@
-name: release - start k8s cluster and deploy binary build
+name: Start GKE cluster and build devel then release
 
 ## Cluster starts at 12pm on Tuesday, Thursday and Saturday
 on: 
