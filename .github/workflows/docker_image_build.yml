@@ -31,7 +31,7 @@ jobs:
           push: true
           tags: bioconductor/bioc-redis:manager
       
-      - name: Build and push release worker devel
+      - name: Build and push devel worker
         id: docker_build_devel
         uses: docker/build-push-action@v2
         with:
@@ -42,7 +42,7 @@ jobs:
           build-args: |
             RELEASE=${{env.DEVEL_TAG}}
 
-      - name: Build and push release worker release
+      - name: Build and push release worker
         id: docker_build_release
         uses: docker/build-push-action@v2
         with:
