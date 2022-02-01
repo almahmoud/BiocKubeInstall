@@ -103,6 +103,10 @@ jobs:
       run: sh -c "while true; do kubectl -n $DEVEL_NAMESPACE logs manager > /tmp/logs && echo "Tail of logs:" && tail /tmp/logs && echo "GREP of errors:" && grep -i "error" /tmp/logs && sleep 5; done" & kubectl -n $DEVEL_NAMESPACE  wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
       continue-on-error: true
 
+    - name: Helm delete the release
+      run: helm delete biock8sredis -n $DEVEL_NAMESPACE
+      continue-on-error: true
+
   deployreleasechart:
     name: Deploy release helm chart and wait
     runs-on: ubuntu-latest
@@ -154,7 +158,11 @@ jobs:
     - name: Get logs and events
       run: sh -c "while true; do kubectl -n $RELEA_NAMESPACE logs manager > /tmp/logs && echo "Tail of logs:" && tail /tmp/logs && echo "GREP of errors:" && grep -i "error" /tmp/logs && sleep 5; done" & kubectl -n $RELEA_NAMESPACE wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
       continue-on-error: true
-
+    
+    # Let chart do any cleanup if needed
+    - name: Delete chart
+      run: helm delete biock8sredis -n $RELEA_NAMESPACE
+      continue-on-error: true
 
   cleanup:
     name: Cleanup GKE cluster
@@ -168,17 +176,8 @@ jobs:
         service_account_key: ${{ secrets.GKE_SA_KEY }}
         project_id: ${{ secrets.GKE_PROJECT }}
 
-    - name: Install Helm
-      run: |
-        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
     # Set kubeconfig
     - run: gcloud container clusters get-credentials "$CLUSTER_BASE_NAME-${{needs.clusterlaunch.outputs.prefix}}" --zone "$GKE_ZONE"
-      continue-on-error: true
-
-    # Let chart do any cleanup if needed
-    - name: Delete chart
-      run: helm delete biock8sredis
       continue-on-error: true
 
     # Delete cluster
