@@ -45,8 +45,9 @@ manager:
 persistence:
   mountPath: /host
   size: 200Gi
-  storageClass: manual
+  storageClass: managed-csi
   #gcpPdName: manual-pd
+  #azurePdHandle: /subscriptions/<subscriptionID>/resourceGroups/MC_myAKSCluster_myAKSCluster_eastus/providers/Microsoft.Compute/disks/myAKSDisk
 
 
 # service key name
