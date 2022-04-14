@@ -70,17 +70,17 @@ jobs:
         cluster-name: ${{ env.CLUSTER_BASE_NAME }}-${{needs.clusterlaunch.outputs.prefix}}
         resource-group: ${{ env.AKS_RESOURCE_GROUP }}
 
-    - name: Create devel disk
-      id: develdisk
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.35.0
-        inlineScript: |
-          az disk create \
-            --resource-group $AKS_RESOURCE_GROUP \
-            --name biockubeinstall-nfs-pd-${{needs.clusterlaunch.outputs.prefix}}-devel \
-            --size-gb $NFS_PD_SIZE \
-            --zone $AKS_ZONE -o json > develdisk.json
+    # - name: Create devel disk
+    #   id: develdisk
+    #   uses: azure/CLI@v1
+    #   with:
+    #     azcliversion: 2.35.0
+    #     inlineScript: |
+    #       az disk create \
+    #         --resource-group $AKS_RESOURCE_GROUP \
+    #         --name biockubeinstall-nfs-pd-${{needs.clusterlaunch.outputs.prefix}}-devel \
+    #         --size-gb $NFS_PD_SIZE \
+    #         --zone $AKS_ZONE -o json > develdisk.json
 
     # Setup kubectl
     - uses: azure/setup-kubectl@v2.0
@@ -97,7 +97,8 @@ jobs:
           --set biocVersion="${DEVEL_MAJOR_VER}.${DEVEL_MINOR_VER}" \
           --set workers.image.tag="RELEASE_${DEVEL_MAJOR_VER}_${DEVEL_MINOR_VER}" \
           --set persistence.size="${NFS_PD_SIZE}Gi" \
-          --set persistence.azurePdHandle="$(jq '.id' develdisk.json)" inst/helm-chart --wait
+          inst/helm-chart --wait
+      # --set persistence.azurePdHandle="$(jq '.id' develdisk.json)" 
 
     - name: check
       run: |
@@ -141,17 +142,17 @@ jobs:
         cluster-name: ${{ env.CLUSTER_BASE_NAME }}-${{needs.clusterlaunch.outputs.prefix}}
         resource-group: ${{ env.AKS_RESOURCE_GROUP }}
 
-    - name: Create release disk
-      id: releasedisk
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.35.0
-        inlineScript: |
-          az disk create \
-            --resource-group $AKS_RESOURCE_GROUP \
-            --name biockubeinstall-nfs-pd-${{needs.clusterlaunch.outputs.prefix}}-release \
-            --size-gb $NFS_PD_SIZE \
-            --zone $AKS_ZONE -o json > releasedisk.json
+    # - name: Create release disk
+    #   id: releasedisk
+    #   uses: azure/CLI@v1
+    #   with:
+    #     azcliversion: 2.35.0
+    #     inlineScript: |
+    #       az disk create \
+    #         --resource-group $AKS_RESOURCE_GROUP \
+    #         --name biockubeinstall-nfs-pd-${{needs.clusterlaunch.outputs.prefix}}-release \
+    #         --size-gb $NFS_PD_SIZE \
+    #         --zone $AKS_ZONE -o json > releasedisk.json
 
     # Setup kubectl
     - uses: azure/setup-kubectl@v2.0
@@ -168,7 +169,8 @@ jobs:
           --set biocVersion="${RELEA_MAJOR_VER}.${RELEA_MINOR_VER}" \
           --set workers.image.tag="RELEASE_${RELEA_MAJOR_VER}_${RELEA_MINOR_VER}" \
           --set persistence.size="${NFS_PD_SIZE}Gi" \
-          --set persistence.azurePdHandle="$(jq '.id' releasedisk.json)" inst/helm-chart --wait
+          inst/helm-chart --wait
+      # --set persistence.azurePdHandle="$(jq '.id' releasedisk.json)" 
 
     - name: check
       run: |
