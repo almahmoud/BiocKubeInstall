@@ -1,10 +1,7 @@
 name: Start AKS cluster and build devel then release
 
 ## Cluster starts at 12pm on Tuesday, Thursday and Saturday
-on: 
-  workflow_dispatch:
-  schedule:
-    - cron:  '0 16 * * 1'
+on: "workflow_dispatch"
 
 env:
   CLUSTER_BASE_NAME: biock8sredis
@@ -225,6 +222,7 @@ jobs:
           az aks delete \
             --name "$CLUSTER_BASE_NAME-${{needs.clusterlaunch.outputs.prefix}}" \
             --resource-group "$AKS_RESOURCE_GROUP" -y
+      continue-on-error: true
 
     - name: Delete devel disk
       uses: azure/CLI@v1
@@ -234,6 +232,7 @@ jobs:
           az disk delete \
             --resource-group $AKS_RESOURCE_GROUP \
             --name biockubeinstall-nfs-pd-${{needs.clusterlaunch.outputs.prefix}}-devel -y
+      continue-on-error: true
 
     - name: Delete release disk
       uses: azure/CLI@v1
