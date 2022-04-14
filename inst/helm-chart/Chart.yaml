@@ -7,3 +7,11 @@ maintainers:
   - name: Nitesh Turaga
   - name: Alex Mahmoud
   - name: Martin Morgan
+dependencies:
+  - name: nfs-server-provisioner
+    repository: https://raw.githubusercontent.com/almahmoud/nfs-ganesha-server-and-external-provisioner/gh-pages/
+    version: 1.5.0
+    condition: nfs.deploy
+    alias: nfs
+    tags:
+      - nfs
