@@ -41,14 +41,29 @@ manager:
       cpu: 1700m
 
 
-# Persistence settings for base NFS disk
+# Persistence settings for workers disk
 persistence:
   mountPath: /host
   size: 200Gi
-  storageClass: managed-csi
+  storageClass: nfs
   #gcpPdName: manual-pd
   #azurePdHandle: /subscriptions/<subscriptionID>/resourceGroups/MC_myAKSCluster_myAKSCluster_eastus/providers/Microsoft.Compute/disks/myAKSDisk
 
+# Settings for nfs dependency
+nfs:
+  deploy: true
+  persistence:
+    enabled: true
+    storageClass: "managed-csi"
+    size: "200Gi"
+  storageClass:
+    name: "nfs"
+    create: true
+    defaultClass: true
+    allowVolumeExpansion: true
+    reclaimPolicy: "Retain"
+    mountOptions:
+      - noatime
 
 # service key name
 serviceKey: bioc-binaries.json
