@@ -14,9 +14,6 @@ spec:
       volumeMounts:
         - name: nfs-data
           mountPath: {{ .Values.persistence.mountPath }}
-        - name: service-key
-          mountPath: /home/key.json
-          subPath: {{ .Values.serviceKey }}
       env:
         - name: PASSWORD
           value: {{ .Values.rstudioPassword | quote }}
@@ -34,9 +31,3 @@ spec:
   - name: nfs-data
     persistentVolumeClaim:
       claimName: {{.Release.Namespace}}-nfs
-  - name: service-key
-    secret:
-      secretName: bioc-binaries-service-account-auth
-      items:
-        - key: service_account_key
-          path: {{ .Values.serviceKey }}
