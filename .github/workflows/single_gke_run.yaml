@@ -91,6 +91,7 @@ jobs:
           --timeout 600s \
           --set biocVersion="${{ github.event.inputs.major_ver }}.${{ github.event.inputs.minor_ver }}" \
           --set workers.image.tag="RELEASE_${{ github.event.inputs.major_ver }}_${{ github.event.inputs.minor_ver }}" \
+          --set manager.image.tag="manager-RELEASE_${{ github.event.inputs.major_ver }}_${{ github.event.inputs.minor_ver }}" \
           --set persistence.size=$NFS_PD_SIZE \
           --set persistence.gcpPdName="biockubeinstall-nfs-pd-${{needs.clusterlaunch.outputs.prefix}}" inst/helm-chart --wait
 
@@ -100,7 +101,7 @@ jobs:
 
     # Requires kubectl client version > 1.23
     - name: Get logs and events
-      run: sh -c "while true; do kubectl -n $NAMESPACE logs manager > /tmp/logs && echo 'Tail of logs:' && tail /tmp/logs && echo 'GREP of errors:' && grep -i 'error: package' /tmp/logs && sleep 5; done" & kubectl -n $NAMESPACE  wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
+      run: sh -c "while true; do kubectl -n $NAMESPACE logs manager > /tmp/logs && echo 'Tail of logs:' && tail /tmp/logs && echo 'GREP of errors:' && grep 'Error' /tmp/logs && sleep 5; done" & kubectl -n $NAMESPACE  wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
       continue-on-error: true
 
     - name: Helm delete the release

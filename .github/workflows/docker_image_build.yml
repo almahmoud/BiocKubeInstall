@@ -6,8 +6,8 @@ on:
     branches:
       - 'master'
 env:
-  DEVEL_TAG: RELEASE_3_15
-  RELEASE_TAG: RELEASE_3_14
+  DEVEL_TAG: RELEASE_3_16
+  RELEASE_TAG: RELEASE_3_15
 
 jobs:
   docker-build-push:
@@ -22,14 +22,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Build and push manager
-        id: docker_build_manager
+      - name: Build and push devel manager
+        id: docker_build_devel_manager
         uses: docker/build-push-action@v2
         with:
           file: inst/docker/Dockerfile.manager
           context: ./inst/docker
           push: true
-          tags: bioconductor/bioc-redis:manager
+          tags: bioconductor/bioc-redis:manager-${{env.DEVEL_TAG}}-azure
+          build-args: |
+            RELEASE=devel
+
+      - name: Build and push release manager
+        id: docker_build_release_manager
+        uses: docker/build-push-action@v2
+        with:
+          file: inst/docker/Dockerfile.manager
+          context: ./inst/docker
+          push: true
+          tags: bioconductor/bioc-redis:manager-${{env.RELEASE_TAG}}-azure
+          build-args: |
+            RELEASE=${{env.RELEASE_TAG}}
       
       - name: Build and push devel worker
         id: docker_build_devel
@@ -38,7 +51,7 @@ jobs:
           file: inst/docker/Dockerfile.worker
           context: ./inst/docker
           push: true
-          tags: bioconductor/bioc-redis:${{env.DEVEL_TAG}}
+          tags: bioconductor/bioc-redis:${{env.DEVEL_TAG}}-azure
           build-args: |
             RELEASE=devel
 
@@ -49,7 +62,7 @@ jobs:
           file: inst/docker/Dockerfile.worker
           context: ./inst/docker
           push: true
-          tags: bioconductor/bioc-redis:${{env.RELEASE_TAG}}
+          tags: bioconductor/bioc-redis:${{env.RELEASE_TAG}}-azure
           build-args: |
             RELEASE=${{env.RELEASE_TAG}}
 
