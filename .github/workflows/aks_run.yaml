@@ -43,7 +43,7 @@ jobs:
             --name "$CLUSTER_BASE_NAME-${{ steps.prefix.outputs.prefix }}" \
             --resource-group "$AKS_RESOURCE_GROUP" \
             --zones "$AKS_ZONE" \
-            --node-count 10 \
+            --node-count 6 \
             --node-osdisk-size="$NODE_DISK_SIZE" \
             --node-vm-size="$NODE_TYPE" \
             --generate-ssh-keys
@@ -90,7 +90,7 @@ jobs:
     - name: Deploy bioc devel helm chart
       run: |
         cd inst/helm-chart && helm dep update && \
-        helm install biock8sredis -n $DEVEL_NAMESPACE --set workers.poolSize=50 \
+        helm install biock8sredis -n $DEVEL_NAMESPACE --set workers.poolSize=30 \
           --create-namespace --timeout 600s \
           --set biocVersion="${DEVEL_MAJOR_VER}.${DEVEL_MINOR_VER}" \
           --set workers.image.tag="RELEASE_${DEVEL_MAJOR_VER}_${DEVEL_MINOR_VER}-azure" \
