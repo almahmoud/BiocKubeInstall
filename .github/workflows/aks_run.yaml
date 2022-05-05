@@ -11,9 +11,9 @@ env:
   NFS_PD_SIZE: 100
   NODE_DISK_SIZE: 30
   DEVEL_MAJOR_VER: 3
-  DEVEL_MINOR_VER: 15
+  DEVEL_MINOR_VER: 16
   RELEA_MAJOR_VER: 3
-  RELEA_MINOR_VER: 14
+  RELEA_MINOR_VER: 15
   DEVEL_NAMESPACE: devel
   RELEA_NAMESPACE: release
   NODE_TYPE: Standard_DS3_v2 # 4 CPU, 14 GiB RAM
@@ -100,14 +100,23 @@ jobs:
           .
       # --set persistence.azurePdHandle="$(jq '.id' develdisk.json)" 
 
-    - name: check
+    - name: check and wait
+      shell: bash
       run: |
-        kubectl -n $DEVEL_NAMESPACE get all
+        kubectl -n $DEVEL_NAMESPACE get all;
+        retries=0
+        state=""
+        while [ -z "$state" ]; do
+          state=$(kubectl -n $DEVEL_NAMESPACE get pod/manager --template="{{range .status.initContainerStatuses}}{{.state.running}}{{end}}")
+          [ -z "$state" ] && echo "Waiting $retries/60" && sleep 10;
+          retries=$((retries + 1));
+        done;
+        echo "Init container in running state: $state"
 
     # Requires kubectl client version > 1.23
     - name: Get logs and events
       run: |
-        sh -c "while true; do kubectl -n $DEVEL_NAMESPACE logs manager > /tmp/logs && echo 'Tail of logs:' && tail /tmp/logs && echo 'GREP of errors:' && grep -i 'error: package' /tmp/logs && sleep 5; done" & kubectl -n $DEVEL_NAMESPACE wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
+        sh -c "while true; do kubectl -n $DEVEL_NAMESPACE logs pod/manager -c manager > /tmp/logs && echo 'Tail of logs:' && tail /tmp/logs && echo 'GREP of errors:' && grep -i 'error: package' /tmp/logs; sleep 10; done" & kubectl -n $DEVEL_NAMESPACE wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
       continue-on-error: true
 
     - name: Helm delete the release
@@ -165,7 +174,7 @@ jobs:
     - name: Deploy bioc release helm chart
       run: |
         cd inst/helm-chart && helm dep update && \
-        helm install biock8sredis -n $RELEA_NAMESPACE --set workers.poolSize=50 \
+        helm install biock8sredis -n $RELEA_NAMESPACE --set workers.poolSize=30 \
           --create-namespace \
           --set biocVersion="${RELEA_MAJOR_VER}.${RELEA_MINOR_VER}" \
           --set workers.image.tag="RELEASE_${RELEA_MAJOR_VER}_${RELEA_MINOR_VER}-azure" \
@@ -175,14 +184,23 @@ jobs:
           .
       # --set persistence.azurePdHandle="$(jq '.id' releasedisk.json)" 
 
-    - name: check
+    - name: check and wait
+      shell: bash
       run: |
-        kubectl -n $RELEA_NAMESPACE get all
+        kubectl -n $RELEA_NAMESPACE get all;
+        retries=0
+        state=""
+        while [ -z "$state" ]; do
+          state=$(kubectl -n $RELEA_NAMESPACE get pod/manager --template="{{range .status.initContainerStatuses}}{{.state.running}}{{end}}")
+          [ -z "$state" ] && echo "Waiting $retries/60" && sleep 10;
+          retries=$((retries + 1));
+        done;
+        echo "Init container in running state: $state"
 
     # Requires kubectl client version > 1.23
     - name: Get logs and events
       run: |
-        sh -c "while true; do kubectl -n $RELEA_NAMESPACE logs manager > /tmp/logs && echo 'Tail of logs:' && tail /tmp/logs && echo 'GREP of errors:' && grep -i 'error: package' /tmp/logs && sleep 5; done" & kubectl -n $RELEA_NAMESPACE  wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
+        sh -c "while true; do kubectl -n $RELEA_NAMESPACE logs pod/manager -c manager > /tmp/logs && echo 'Tail of logs:' && tail /tmp/logs && echo 'GREP of errors:' && grep -i 'error: package' /tmp/logs; sleep 10; done" & kubectl -n $RELEA_NAMESPACE wait --for=jsonpath='{.status.phase}'=Succeeded --timeout=36000s pod/manager
       continue-on-error: true
 
     - name: Helm delete the release
