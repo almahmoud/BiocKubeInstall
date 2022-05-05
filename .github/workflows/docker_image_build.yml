@@ -32,6 +32,7 @@ jobs:
           tags: bioconductor/bioc-redis:manager-${{env.DEVEL_TAG}}-azure
           build-args: |
             RELEASE=devel
+            BRANCH=${{ github.sha }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build_devel_manager.outputs.digest }}
@@ -58,6 +59,7 @@ jobs:
           tags: bioconductor/bioc-redis:manager-${{env.RELEASE_TAG}}-azure
           build-args: |
             RELEASE=${{env.RELEASE_TAG}}
+            BRANCH=${{ github.sha }}
       
       - name: Image digest
         run: echo ${{ steps.docker_build_devel_manager.outputs.digest }}
@@ -84,6 +86,7 @@ jobs:
           tags: bioconductor/bioc-redis:${{env.DEVEL_TAG}}-azure
           build-args: |
             RELEASE=devel
+            BRANCH=${{ github.sha }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build_devel.outputs.digest }}
@@ -110,6 +113,7 @@ jobs:
           tags: bioconductor/bioc-redis:${{env.RELEASE_TAG}}-azure
           build-args: |
             RELEASE=${{env.RELEASE_TAG}}
+            BRANCH=${{ github.sha }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build_release.outputs.digest }}
