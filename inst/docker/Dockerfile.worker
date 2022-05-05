@@ -7,6 +7,6 @@ RUN apt-get update && \
         rm -rf /var/lib/apt/lists/*
 
 RUN R -e 'BiocManager::install("Bioconductor/BiocParallel")'
-RUN R -e 'BiocManager::install("almahmoud/BiocKubeInstall@$BRANCH")'
+RUN R -e "BiocManager::install('almahmoud/BiocKubeInstall@$BRANCH')"
 
 COPY worker.R /home/docker/
