@@ -46,6 +46,7 @@ kube_install_single_package <-
 
     Sys.setenv(BIOCONDUCTOR_USE_CONTAINER_REPOSITORY=FALSE)
     on.exit(Sys.setenv(BIOCONDUCTOR_USE_CONTAINER_REPOSITORY=TRUE))
+
     withCallingHandlers({
         suppressMessages(
             BiocManager::install(
@@ -296,7 +297,7 @@ kube_run <-
     ## remove exclude packages
     deps <- pkg_dependencies(
                 bioc_version, build = "_software",
-                binary_repo = repos$binary,
+                # binary_repo = repos$binary,
                 exclude = exclude_pkgs
     )
 
