@@ -1,6 +1,6 @@
 Package: BiocKubeInstall
 Title: Build R / Bioconductor package binaries using Kubernetes on a cloud service
-Version: 0.99.3
+Version: 0.99.4
 Authors@R:
     c(person(given = "Nitesh", family = "Turaga",
 	     role = c("aut", "cre"), email = "nturaga.bioc@gmail.com"),
@@ -33,7 +33,7 @@ Remotes: mtmorgan/RedisParam@master
 LazyData: true
 VignetteBuilder: knitr
 biocViews: Infrastructure
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Suggests:
     testthat,
     knitr,

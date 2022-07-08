@@ -39,6 +39,7 @@ NULL
         contrib_url,
         name = "kube_install"
     )
+
     idx <- db[, "Repository"] == contrib_url
     software_pkgs <- rownames(db)[idx]
     flog.info(
@@ -193,7 +194,7 @@ pkg_dependencies <-
     ## in the .pkg_dependencies_software, where the
     ## BiocManager::repositories() should NOT give the container-binaries
     ## repository before BioCsoft
-    Sys.setenv(BIOCONDUCTOR_USE_CONTAINER_REPOSITORY=FALSE)
+    # Sys.setenv(BIOCONDUCTOR_USE_CONTAINER_REPOSITORY=FALSE)
 
     build <- match.arg(build)
     stopifnot(
@@ -271,5 +272,6 @@ pkg_dependencies <-
 
 .worker_repositories <- function(version) {
     repos <- BiocManager::repositories()
+    repos <- repos[!names(repos) %in% 'BioCcontainers']
     sub("/[[:digit:]\\.]+/", paste0("/",version,"/"), repos)
 }

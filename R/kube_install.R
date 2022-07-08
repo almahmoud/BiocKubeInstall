@@ -272,7 +272,7 @@ kube_install <-
 #'
 #' @param exclude_pkgs character(), list of packages to exclude
 #'
-#' @importFrom RedisParam RedisParam bpstopall
+#' @importFrom RedisParam RedisParam rpstopall
 #' @examples
 #' \dontrun{
 #'
@@ -327,7 +327,7 @@ kube_run <-
     )
 
     ## Stop RedisParam - This should stop all work on workers
-    bpstopall(BPPARAM)
+    rpstopall(BPPARAM)
 
     ##  Step 4: Sync all artifacts produced, binaries, logs
     ## PAIN POINT 3: Remove from this function - all sync goes to Github actions
