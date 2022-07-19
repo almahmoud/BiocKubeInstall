@@ -1,0 +1,21 @@
+name: Test GHA bot
+
+on: 
+  workflow_dispatch: {}
+
+jobs:
+  testghaslack:
+    name: Test GHA slack
+    runs-on: ubuntu-latest
+    steps:
+    - name: Post to a Slack channel
+      id: slack
+      uses: slackapi/slack-github-action@v1.19.0
+      with:
+        # Slack channel id, channel name, or user id to post message.
+        # See also: https://api.slack.com/methods/chat.postMessage#channels
+        channel-id: 'C03PYLC4TUN'
+        # For posting a simple plain text message
+        slack-message: "Test"
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
