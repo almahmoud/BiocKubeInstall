@@ -2,6 +2,7 @@ name: Test GHA bot
 
 on: 
   workflow_dispatch: {}
+  push: {}
 
 jobs:
   testghaslack:
